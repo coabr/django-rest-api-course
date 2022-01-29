@@ -1,37 +1,27 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import generics
 
 from .models import Curso, Avaliacao
 from .serializers import CursoSerializer, AvaliacaoSerializer
 
-class CursoAPIView(APIView):
+class CursosAPIView(generics.ListCreateAPIView): # List lista com get e Create cria com post
     """
     API REST para cursos
     """
-    def get(self, request):
-        cursos = Curso.objects.all()
-        serializer = CursoSerializer(cursos, many=True)
-        return Response(serializer.data)
+    queryset = Curso.objects.all()
+    serializer_class = CursoSerializer
 
-    def post(self, request):
-        serializer = CursoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({"msg": "curso criado com sucesso"}, status=status.HTTP_201_CREATED)
+class CursoAPIView(generics.RetrieveUpdateDestroyAPIView): # esses precisam do id pois fazem a acao pra cada um
+    queryset = Curso.objects.all()
+    serializer_class = CursoSerializer
 
 
-class AvaliacaoAPIView(APIView):
+class AvaliacoesAPIView(generics.ListCreateAPIView):
     """
     API REST para avaliações
     """
-    def get(self, request):
-        avaliacoes = Avaliacao.objects.all()
-        serializer = AvaliacaoSerializer(avaliacoes, many=True)
-        return Response(serializer.data)
+    queryset = Avaliacao.objects.all()
+    serializer_class = AvaliacaoSerializer
 
-    def post(self, request):
-        serializer = AvaliacaoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+class AvaliacaoAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Avaliacao.objects.all()
+    serializer_class = AvaliacaoSerializer
