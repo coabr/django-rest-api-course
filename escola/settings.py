@@ -9,9 +9,10 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 
-Token: 2d696dc7ce5c630b353502cbd2ec788b09e3be19 # token gerado pelo shell
+Token carol: 2d696dc7ce5c630b353502cbd2ec788b09e3be19 # token gerado pelo shell
 
-"""
+Token felicity: 2afbce0a103e693bd35ef0089a551fd9ffba6857 # token gerado pelo painel administrativo
+""" 
 
 from http.client import RESET_CONTENT
 import os

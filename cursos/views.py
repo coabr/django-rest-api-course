@@ -2,27 +2,33 @@ from rest_framework import generics
 from rest_framework.generics import get_object_or_404
 
 from rest_framework import viewsets
-from rest_framework.decorators import action # muda açoes dentro do nosso model view
+# muda açoes dentro do nosso model view
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import mixins
 
+from rest_framework import permissions
 
 from .models import Curso, Avaliacao
 from .serializers import CursoSerializer, AvaliacaoSerializer
-from cursos import serializers
+from .permissions import IsSuperUser
 
 """
 API v1
 """
 
-class CursosAPIView(generics.ListCreateAPIView): # List lista com get e Create cria com post
+
+# List lista com get e Create cria com post
+class CursosAPIView(generics.ListCreateAPIView):
     """
     API REST para cursos
     """
     queryset = Curso.objects.all()
     serializer_class = CursoSerializer
 
-class CursoAPIView(generics.RetrieveUpdateDestroyAPIView): # esses precisam do id pois fazem a acao pra cada um
+
+# esses precisam do id pois fazem a acao pra cada um
+class CursoAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Curso.objects.all()
     serializer_class = CursoSerializer
 
@@ -39,6 +45,7 @@ class AvaliacoesAPIView(generics.ListCreateAPIView):
             return self.queryset.filter(curso_id=self.kwargs.get('curso_pk'))
         return self.queryset.all()
 
+
 class AvaliacaoAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Avaliacao.objects.all()
     serializer_class = AvaliacaoSerializer
@@ -48,11 +55,14 @@ class AvaliacaoAPIView(generics.RetrieveUpdateDestroyAPIView):
             return get_object_or_404(self.get_queryset(), curso_id=self.kwargs.get('curso_pk'), pk=self.kwargs.get('avaliacao_pk'))
         return get_object_or_404(self.get_queryset(), pk=self.kwargs.get('avaliacao_pk'))
 
+
 """
 API V2 - faz o mesmo que a v1 mas com viewsets (menos código)
 """
 
+
 class CursoViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsSuperUser, permissions.DjangoModelPermissions,)
     queryset = Curso.objects.all()
     serializer_class = CursoSerializer
 
@@ -61,7 +71,7 @@ class CursoViewSet(viewsets.ModelViewSet):
         self.pagination_class.page_size = 2
         avaliacoes = Avaliacao.objects.filter(curso_id=pk)
         page = self.paginate_queryset(avaliacoes)
-        
+
         if page is not None:
             serializer = AvaliacaoSerializer(page, many=True)
             return self.get_paginated_response(serializer.data)
@@ -76,6 +86,7 @@ class AvaliacaoViewSet(viewsets.ModelViewSet):
     serializer_class = AvaliacaoSerializer
 """
 
+
 class AvaliacaoViewSet(mixins.ListModelMixin,
                        mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
@@ -88,4 +99,4 @@ class AvaliacaoViewSet(mixins.ListModelMixin,
     def get_queryset(self):
         if self.kwargs.get('curso_pk'):
             return self.queryset.filter(curso_id=self.kwargs.get('curso_pk'))
-        return self.queryset.all()  
+        return self.queryset.all()
