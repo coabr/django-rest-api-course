@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 Token carol: 2d696dc7ce5c630b353502cbd2ec788b09e3be19 # token gerado pelo shell
 
 Token felicity: 2afbce0a103e693bd35ef0089a551fd9ffba6857 # token gerado pelo painel administrativo
-""" 
+"""
 
 from http.client import RESET_CONTENT
 import os
@@ -133,15 +133,20 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-#DRF
+# DRF
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.SessionAuthentication', # autenticação via browser
-        'rest_framework.authentication.TokenAuthentication', # autenticação via token
+        'rest_framework.authentication.TokenAuthentication',  # autenticação via token
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 3
+    'PAGE_SIZE': 3,
+    'DEFAULT_THROTTLE_CLASSES': ('rest_framework.throttling.AnonRateThrottle', 'rest_framework.throttling.UserRateThrottle'),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '5/minute',
+        'user': '10/minute'
+    }
 }
