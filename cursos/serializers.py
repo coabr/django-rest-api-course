@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import Avg
 
 from .models import Curso, Avaliacao
 
@@ -34,6 +35,9 @@ class CursoSerializer(serializers.ModelSerializer):
 
     # 3 - Primary Key Related Field
     avaliacoes = serializers.PrimaryKeyRelatedField(many=True, read_only=True) # ideal pra grandes quantidades pq só mostra o ID do item
+
+    media_avaliacoes = serializers.SerializerMethodField() # novo atributo que traz a média das avaliações
+
     class Meta:
         model = Curso
         fields = (
@@ -42,5 +46,13 @@ class CursoSerializer(serializers.ModelSerializer):
             'url',
             'criacao',
             'ativo',
-            'avaliacoes'
+            'avaliacoes',
+            'media_avaliacoes'
         )
+
+    def get_media_avaliacoes(self, obj):
+        media = obj.avaliacoes.aggregate(Avg('avaliacao')).get('avaliacao__avg')
+
+        if media is None:
+            return 0
+        return round(media, 1)  
