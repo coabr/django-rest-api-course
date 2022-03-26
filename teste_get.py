@@ -6,8 +6,7 @@ url_bases_cursos = 'http://localhost:8000/api/v2/cursos/'
 url_bases_avaliacoes = 'http://localhost:8000/api/v2/avaliacoes/'
 
 resultado = requests.get(url=url_bases_cursos, headers=header)
-
-#print(resultado.json())
+print(resultado.json())
 # print(resultado.status_code)
 
 # testando se o endpoint está correto
